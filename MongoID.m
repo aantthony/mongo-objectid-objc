@@ -3,6 +3,8 @@
 @implementation MongoID
 static int counter = -1;
 static int mid = 0;
+static UInt8 pidHigh;
+static UInt8 pidLow;
 
 + (void) initialize {
     counter = rand() & 0xffffff;
@@ -15,7 +17,11 @@ static int mid = 0;
         int x = data[i%16] + (data[(i+1) % 16] << 8) + (data[(i + 2) % 16] << 16);
         d = (d ^ x) & 0xffffff;
     }
-    mid = d & 0xffffff;
+    mid = d;
+    
+    UInt16 pid = getpid();
+    pidHigh = pid >> 8;
+    pidLow = pid & 0xff;
 
 }
 + (ObjectID) id {
@@ -25,9 +31,6 @@ static int mid = 0;
     }
     ObjectID _id;
     _id.m[2] = time(0);
-    UInt16 pid = getpid();
-    UInt8 pidHigh = pid >> 8;
-    UInt8 pidLow = pid & 0xff;
     _id.m[1] = pidLow + (mid << 8);
     _id.m[0] = counter + (pidHigh << 24);
     return _id;
