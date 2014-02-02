@@ -42,21 +42,16 @@ static UInt8 pidLow;
 
 + (ObjectID) idWithString:(NSString *) string {
     ObjectID _id;
-    NSScanner *scanner = [ NSScanner scannerWithString:string];
-    
-    unsigned int a, b, c;
-    
-    [scanner setScanLocation:0];
-    [scanner scanHexInt:&a];
-    
-    [scanner setScanLocation:4];
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    unsigned long long a;
+    scanner.scanLocation = 8;
+    [scanner scanHexLongLong:&a];
+    _id.m[1] = a >> 32;
+    _id.m[0] = a & 0xffffffff;
+    scanner = [NSScanner scannerWithString:[string substringWithRange:NSMakeRange(0, 8)]];
+    unsigned int b;
     [scanner scanHexInt:&b];
-    
-    [scanner setScanLocation:8];
-    [scanner scanHexInt:&c];
-    _id.m[2] = a;
-    _id.m[1] = b;
-    _id.m[2] = c;
+    _id.m[2] = b;
     return _id;
 }
 @end
