@@ -30,7 +30,7 @@ static UInt8 pidLow;
         counter = 0;
     }
     ObjectID _id;
-    _id.m[2] = time(0);
+    _id.m[2] = (UInt32)time(0);
     _id.m[1] = pidLow + (mid << 8);
     _id.m[0] = counter + (pidHigh << 24);
     return _id;
